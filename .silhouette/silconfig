@@ -1,0 +1,6 @@
+compiler gcc
+source_ext c
+header_ext h
+source ./src
+include ./src/include
+build ./build
