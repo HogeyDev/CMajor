@@ -4,5 +4,5 @@ header_ext h
 source ./src
 include ./src/include
 build ./build
-ccargs -g
+ccargs -g -O2
 ldargs -g -lSDL2 -lSDL2_mixer -lSDL2_image -lSDL2_ttf -lm

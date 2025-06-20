@@ -17,4 +17,6 @@ Song song_from_yt(const char *url);
 void download_song(Song s);
 void download_thumbnail(Song s);
 
+double get_wav_length(const char *filepath);
+
 #endif

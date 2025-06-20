@@ -157,13 +157,17 @@ void draw_element(Element *element, UI *ui) {
                                    break;
                                }
         case ELEMENT_STATUSBAR: {
-                                    const StatusBar *bar = element->data.status_bar;
+                                    StatusBar *bar = element->data.status_bar;
                                     SDL_Rect background_rect = {
                                         .x = bar->margin,
                                         .y = ui->window->height - (bar->size + bar->margin),
                                         .w = ui->window->width - 2 * bar->margin,
                                         .h = bar->size,
                                     };
+                                    bar->x = background_rect.x;
+                                    bar->y = background_rect.y;
+                                    bar->width = background_rect.w;
+                                    bar->height = background_rect.h;
                                     SDL_SetRenderDrawColor(ui->window->renderer, 0x44, 0x47, 0x5a, 255);
                                     SDL_RenderFillRect(ui->window->renderer, &background_rect);
 
@@ -177,11 +181,14 @@ void draw_element(Element *element, UI *ui) {
                                         bar->progress_bar_length - progress_bar_thickness,
                                         progress_bar_thickness
                                     };
+                                    bar->playbar_x = bar_rect.x;
+                                    bar->playbar_y = bar_rect.y;
+                                    bar->playbar_width = bar_rect.w;
+                                    bar->playbar_height = bar_rect.h;
                                     SDL_SetRenderDrawColor(ui->window->renderer, 0x62, 0x72, 0xa4, 255);
                                     SDL_RenderFillRect(ui->window->renderer, &bar_rect);
 
-                                    bar_rect.w *= bar->song_progress;
-                                    bar_rect.w /= bar->song_length;
+                                    bar_rect.w *= bar->song_progress / bar->song_length;
                                     SDL_SetRenderDrawColor(ui->window->renderer, 0xf8, 0xf8, 0xf2, 255);
                                     SDL_RenderFillRect(ui->window->renderer, &bar_rect);
 

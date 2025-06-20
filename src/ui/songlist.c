@@ -1,6 +1,9 @@
 #include "songlist.h"
+#include "song.h"
 #include "state.h"
+#include "statusbar.h"
 #include <SDL2/SDL_mixer.h>
+#include <stdio.h>
 
 void update_songlist(UIState *state, SongList *songlist) {
     if (
@@ -11,8 +14,16 @@ void update_songlist(UIState *state, SongList *songlist) {
        ) {
         if (state->mouse->scroll) {
             songlist->scrolloff -= state->mouse->scroll * 64;
-            if (songlist->scrolloff < 0) {
+            const unsigned int songlist_height = (songlist->song_size + songlist->margin) * songlist->songs.size;
+            if (songlist_height < songlist->height) {
                 songlist->scrolloff = 0;
+            } else {
+                if (songlist->scrolloff <= 0) {
+                    songlist->scrolloff = 0;
+                }
+                if (songlist_height - songlist->scrolloff <= songlist->height) {
+                    songlist->scrolloff = songlist_height - songlist->height;
+                }
             }
         }
         if (state->mouse->state & LMB_MASK << DOWN_EDGE_SHIFT) {
@@ -30,6 +41,7 @@ void update_songlist(UIState *state, SongList *songlist) {
                         fprintf(stderr, "Could not load song\n"); 
                     }
 
+                    status_bar->song_length = get_wav_length(song_path);
                     Mix_VolumeMusic(state->volume);
                     Mix_PlayMusic(music, 0);
                 } else {

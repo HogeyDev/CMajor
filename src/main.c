@@ -8,6 +8,7 @@
 #include <SDL2/SDL_video.h>
 #include <SDL2/SDL.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "include/playlist.h"
 #include "page.h"
@@ -26,9 +27,8 @@ static unsigned int framerate = 240;
 static PlayerPage current_page = PAGE_HOME;
 static unsigned char volume = 10;
 
-static StatusBar status_bar = { 0 };
-
 int main(void) {
+    status_bar = calloc(1, sizeof(StatusBar));
     Playlist list = load_list("list.txt");
     download_list(&list);
     printf("Cataloging done!\n");
@@ -57,7 +57,7 @@ int main(void) {
         .y = 0,
         .width = 1080,
         .height = 720,
-        .song_size = 32,
+        .song_size = 128,
         .margin = 8,
         .padding = 8,
         .selected_index = -1,
@@ -82,19 +82,23 @@ int main(void) {
     songlist_elem.data.songlist = &songlist;
     push_element(ui->elements, &songlist_elem);
 
-    status_bar.song_name = "MY COOL SONG NAME LOL!";
-    status_bar.song_length = 100;
-    status_bar.song_progress = 64;
-    status_bar.playtime_font = TTF_OpenFont("fonts/NotoSansCJKjp-Regular.otf", 12);
-    status_bar.progress_bar_length = 640;
-    status_bar.margin = 8;
-    status_bar.size = 32;
+    status_bar->song_name = "MY COOL SONG NAME LOL!";
+    status_bar->song_length = 100;
+    status_bar->song_progress = 64;
+    status_bar->progress_bar_length = 640;
+    status_bar->margin = 8;
+    status_bar->padding = 8;
+    status_bar->size = 32;
+    status_bar->playtime_font = TTF_OpenFont("fonts/NotoSansCJKjp-Regular.otf", status_bar->size - status_bar->padding * 2);
     Element status_bar_elem = { 0 };
     status_bar_elem.type = ELEMENT_STATUSBAR;
-    status_bar_elem.data.status_bar = &status_bar;
+    status_bar_elem.data.status_bar = status_bar;
     push_element(ui->elements, &status_bar_elem);
 
+    songlist.height -= status_bar->size + status_bar->padding * 2;
+
     UIState *ui_state = (UIState *)calloc(1, sizeof(UIState *));
+    ui_state->window = &window;
     ui_state->mouse = (Mouse *)calloc(1, sizeof(Mouse *));
     ui_state->volume = volume;
     // ui_state->keyboard = (Keyboard *)malloc(sizeof(Keyboard *));

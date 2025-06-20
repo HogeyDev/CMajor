@@ -1,6 +1,7 @@
 #ifndef STATE_H
 #define STATE_H
 
+#include "window.h"
 #define LMB_MASK 0b01
 #define RMB_MASK 0b10
 #define DOWN_EDGE_SHIFT 2
@@ -26,6 +27,7 @@ typedef struct {
 } Keyboard;
 
 typedef struct {
+    Window *window;
     Mouse *mouse;
     Keyboard *keyboard;
     unsigned char volume;

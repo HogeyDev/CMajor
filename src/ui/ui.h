@@ -40,7 +40,7 @@ typedef struct {
 ElementList *create_element_list();
 void push_element(ElementList *list, void *element);
 
-typedef struct {
+typedef struct UI {
     Window *window;
     ElementList *elements;
 } UI;
