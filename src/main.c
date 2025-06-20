@@ -13,6 +13,7 @@
 #include "page.h"
 #include "ui/songlist.h"
 #include "ui/state.h"
+#include "ui/statusbar.h"
 #include "ui/ui.h"
 #include "window.h"
 #include "components.h"
@@ -24,6 +25,8 @@ static unsigned int framerate = 240;
 
 static PlayerPage current_page = PAGE_HOME;
 static unsigned char volume = 10;
+
+static StatusBar status_bar = { 0 };
 
 int main(void) {
     Playlist list = load_list("list.txt");
@@ -59,8 +62,9 @@ int main(void) {
         .padding = 8,
         .selected_index = -1,
     };
-    songlist.font = TTF_OpenFont("/usr/share/fonts/TTF/JetBrainsMonoNerdFont-Regular.ttf", songlist.song_size - 2 * songlist.padding);
-    // TTF_Font *fallback = TTF_OpenFont("fonts/NotoSansCJKjp-Regular.otf", songlist.song_size - 2 * songlist.padding);
+    // songlist.font = TTF_OpenFont("/usr/share/fonts/TTF/JetBrainsMonoNerdFont-Regular.ttf", songlist.song_size - 2 * songlist.padding);
+    TTF_Font *fallback = TTF_OpenFont("fonts/NotoSansCJKjp-Regular.otf", songlist.song_size - 2 * songlist.padding);
+    songlist.font = fallback; // until we fully migrate to sdl3, we will just use the fallback font as the main font
 
     for (unsigned int i = 0; i < list.size; i++) {
         Song *song = &list.songs[i];
@@ -77,6 +81,18 @@ int main(void) {
     songlist_elem.type = ELEMENT_SONGLIST;
     songlist_elem.data.songlist = &songlist;
     push_element(ui->elements, &songlist_elem);
+
+    status_bar.song_name = "MY COOL SONG NAME LOL!";
+    status_bar.song_length = 100;
+    status_bar.song_progress = 64;
+    status_bar.playtime_font = TTF_OpenFont("fonts/NotoSansCJKjp-Regular.otf", 12);
+    status_bar.progress_bar_length = 640;
+    status_bar.margin = 8;
+    status_bar.size = 32;
+    Element status_bar_elem = { 0 };
+    status_bar_elem.type = ELEMENT_STATUSBAR;
+    status_bar_elem.data.status_bar = &status_bar;
+    push_element(ui->elements, &status_bar_elem);
 
     UIState *ui_state = (UIState *)calloc(1, sizeof(UIState *));
     ui_state->mouse = (Mouse *)calloc(1, sizeof(Mouse *));

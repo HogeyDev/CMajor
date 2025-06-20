@@ -6,14 +6,16 @@
 #include "state.h"
 #include "box.h"
 #include "button.h"
+#include "statusbar.h"
 #include "window.h"
 
 typedef enum {
     ELEMENT_BOX,
-    ELEMENT_TEXT,
-    ELEMENT_IMAGE,
     ELEMENT_BUTTON,
+    ELEMENT_IMAGE,
     ELEMENT_SONGLIST,
+    ELEMENT_STATUSBAR,
+    ELEMENT_TEXT,
 } ElementType;
 
 typedef struct {
@@ -25,6 +27,7 @@ typedef struct {
         Image *image;
         Button *button;
         SongList *songlist;
+        StatusBar *status_bar;
     } data;
 } Element;
 

@@ -1,5 +1,6 @@
 #include "ui.h"
 #include "songlist.h"
+#include "statusbar.h"
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
@@ -64,6 +65,7 @@ void update_element(UIState *state, Element *element) {
         case ELEMENT_IMAGE: update_image(state, element->data.image); break;
         // case ELEMENT_BUTTON: break;
         case ELEMENT_SONGLIST: update_songlist(state, element->data.songlist); break;
+        case ELEMENT_STATUSBAR: update_statusbar(state, element->data.status_bar); break;
         default: fprintf(stderr, "couldn't find a method to UPDATE element type: %d\n", element->type); break;
     }
 }
@@ -154,6 +156,37 @@ void draw_element(Element *element, UI *ui) {
                                    }
                                    break;
                                }
+        case ELEMENT_STATUSBAR: {
+                                    const StatusBar *bar = element->data.status_bar;
+                                    SDL_Rect background_rect = {
+                                        .x = bar->margin,
+                                        .y = ui->window->height - (bar->size + bar->margin),
+                                        .w = ui->window->width - 2 * bar->margin,
+                                        .h = bar->size,
+                                    };
+                                    SDL_SetRenderDrawColor(ui->window->renderer, 0x44, 0x47, 0x5a, 255);
+                                    SDL_RenderFillRect(ui->window->renderer, &background_rect);
+
+                                    const unsigned int progress_bar_thickness = 6;
+                                    const unsigned int progress_bar_x = (background_rect.w - bar->progress_bar_length) / 2;
+                                    const unsigned int progress_bar_y = background_rect.y + (background_rect.h - progress_bar_thickness) / 2;
+
+                                    SDL_Rect bar_rect = {
+                                        progress_bar_x,
+                                        progress_bar_y,
+                                        bar->progress_bar_length - progress_bar_thickness,
+                                        progress_bar_thickness
+                                    };
+                                    SDL_SetRenderDrawColor(ui->window->renderer, 0x62, 0x72, 0xa4, 255);
+                                    SDL_RenderFillRect(ui->window->renderer, &bar_rect);
+
+                                    bar_rect.w *= bar->song_progress;
+                                    bar_rect.w /= bar->song_length;
+                                    SDL_SetRenderDrawColor(ui->window->renderer, 0xf8, 0xf8, 0xf2, 255);
+                                    SDL_RenderFillRect(ui->window->renderer, &bar_rect);
+
+                                    break;
+                                }
         default: fprintf(stderr, "couldn't find a method to DRAW element type: %d\n", element->type); break;
     }
 }
