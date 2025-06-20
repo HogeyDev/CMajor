@@ -1,0 +1,2 @@
+// #define LIMIT_FRAMERATE
+#define FRAMERATE_COUNTER
