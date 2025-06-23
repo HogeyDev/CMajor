@@ -8,6 +8,7 @@ typedef struct {
     char *song_name;
     double song_progress;
     double song_length;
+    unsigned char song_volume;
 
     unsigned int progress_bar_length;
     TTF_Font *playtime_font;
@@ -21,6 +22,10 @@ typedef struct {
 
     unsigned int playbar_x, playbar_y;
     unsigned int playbar_width, playbar_height;
+
+    unsigned int volume_bar_length;
+    unsigned int volume_x, volume_y;
+    unsigned int volume_width, volume_height;
 } StatusBar;
 
 extern StatusBar *status_bar;

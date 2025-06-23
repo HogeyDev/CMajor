@@ -2,6 +2,7 @@
 #include "songlist.h"
 #include "statusbar.h"
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_surface.h>
@@ -178,7 +179,7 @@ void draw_element(Element *element, UI *ui) {
                                     SDL_Rect bar_rect = {
                                         progress_bar_x,
                                         progress_bar_y,
-                                        bar->progress_bar_length - progress_bar_thickness,
+                                        bar->progress_bar_length,
                                         progress_bar_thickness
                                     };
                                     bar->playbar_x = bar_rect.x;
@@ -191,6 +192,27 @@ void draw_element(Element *element, UI *ui) {
                                     bar_rect.w *= bar->song_progress / bar->song_length;
                                     SDL_SetRenderDrawColor(ui->window->renderer, 0xf8, 0xf8, 0xf2, 255);
                                     SDL_RenderFillRect(ui->window->renderer, &bar_rect);
+
+                                    const unsigned int volume_bar_thickness = 6;
+                                    const unsigned int volume_bar_x = ui->window->width - bar->volume_bar_length - bar->margin - bar->padding;
+                                    const unsigned int volume_bar_y = background_rect.y + (background_rect.h - volume_bar_thickness) / 2;
+
+                                    SDL_Rect volume_bar_rect = {
+                                        volume_bar_x,
+                                        volume_bar_y,
+                                        bar->volume_bar_length,
+                                        volume_bar_thickness
+                                    };
+                                    bar->volume_x = volume_bar_rect.x;
+                                    bar->volume_y = volume_bar_rect.y;
+                                    bar->volume_width = volume_bar_rect.w;
+                                    bar->volume_height = volume_bar_rect.h;
+                                    SDL_SetRenderDrawColor(ui->window->renderer, 0x62, 0x72, 0xa4, 255);
+                                    SDL_RenderFillRect(ui->window->renderer, &volume_bar_rect);
+
+                                    volume_bar_rect.w *= (float)bar->song_volume / MIX_MAX_VOLUME;
+                                    SDL_SetRenderDrawColor(ui->window->renderer, 0xf8, 0xf8, 0xf2, 255);
+                                    SDL_RenderFillRect(ui->window->renderer, &volume_bar_rect);
 
                                     break;
                                 }

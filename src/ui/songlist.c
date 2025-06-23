@@ -42,7 +42,7 @@ void update_songlist(UIState *state, SongList *songlist) {
                     }
 
                     status_bar->song_length = get_wav_length(song_path);
-                    Mix_VolumeMusic(state->volume);
+                    Mix_VolumeMusic(status_bar->song_volume);
                     Mix_PlayMusic(music, 0);
                 } else {
                     printf("selected track %d: %s\n", track, songlist->songs.songs[track].name);

@@ -25,7 +25,6 @@ static unsigned int framerate = 240;
 #endif
 
 static PlayerPage current_page = PAGE_HOME;
-static unsigned char volume = 10;
 
 int main(void) {
     status_bar = calloc(1, sizeof(StatusBar));
@@ -57,7 +56,7 @@ int main(void) {
         .y = 0,
         .width = 1080,
         .height = 720,
-        .song_size = 128,
+        .song_size = 32,
         .margin = 8,
         .padding = 8,
         .selected_index = -1,
@@ -85,7 +84,8 @@ int main(void) {
     status_bar->song_name = "MY COOL SONG NAME LOL!";
     status_bar->song_length = 100;
     status_bar->song_progress = 64;
-    status_bar->progress_bar_length = 640;
+    status_bar->progress_bar_length = window.width / 2;
+    status_bar->volume_bar_length = window.width / 8;
     status_bar->margin = 8;
     status_bar->padding = 8;
     status_bar->size = 32;
@@ -100,7 +100,7 @@ int main(void) {
     UIState *ui_state = (UIState *)calloc(1, sizeof(UIState *));
     ui_state->window = &window;
     ui_state->mouse = (Mouse *)calloc(1, sizeof(Mouse *));
-    ui_state->volume = volume;
+    status_bar->song_volume = 10;
     // ui_state->keyboard = (Keyboard *)malloc(sizeof(Keyboard *));
 
 #ifdef FRAMERATE_COUNTER

@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
 #include "playlist.h"
 #include "io.h"
@@ -87,9 +89,32 @@ void add_song(Playlist *p, Song s) {
     p->songs[p->size - 1] = s;
 }
 
+int download_threads = 0;
+void wait_for_download_thread() {
+    int status;
+    wait(&status);
+    download_threads--;
+}
 void download_list(Playlist *p) {
     for (unsigned int i = 0; i < p->size; i++) {
-        download_song(p->songs[i]);
-        download_thumbnail(p->songs[i]);
+        while (download_threads >= MAX_DOWNLOAD_THREADS) {
+            wait_for_download_thread();
+        }
+
+        pid_t pid = fork();
+        if (pid == 0) {
+            // this is a child process and we can now do a lil parallel processing
+            download_song(p->songs[i]);
+            download_thumbnail(p->songs[i]);
+            _exit(0);
+        } else if (pid > 0) {
+            download_threads++;
+        } else {
+            perror("fork failed");
+            exit(1);
+        }
+    }
+    while (download_threads > 0) {
+        wait_for_download_thread();
     }
 }
