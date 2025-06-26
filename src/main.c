@@ -47,8 +47,8 @@ int main(void) {
         return 1;
     }
 
-    Window window = create_window(1280, 720, "CMajor");
-    UI *ui = create_ui(&window);
+    Window window = create_window(1280, 720, "Nocturne");
+    UI *songlist_ui = create_ui(&window);
 
     SongList songlist = {
         .songs = list,
@@ -73,13 +73,13 @@ int main(void) {
         SDL_QueryTexture(song->image, NULL, NULL, &song->iw, &song->ih);
 
         song->title_surface = TTF_RenderUTF8_Blended(songlist.font, song->name, (SDL_Color){ 0xf8, 0xf8, 0xf2, 0xff });
-        song->title_texture = SDL_CreateTextureFromSurface(ui->window->renderer, song->title_surface);
+        song->title_texture = SDL_CreateTextureFromSurface(songlist_ui->window->renderer, song->title_surface);
     }
 
     Element songlist_elem = { 0 };
     songlist_elem.type = ELEMENT_SONGLIST;
     songlist_elem.data.songlist = &songlist;
-    push_element(ui->elements, &songlist_elem);
+    push_element(songlist_ui->elements, &songlist_elem);
 
     status_bar->song_name = "MY COOL SONG NAME LOL!";
     status_bar->song_length = 100;
@@ -93,7 +93,7 @@ int main(void) {
     Element status_bar_elem = { 0 };
     status_bar_elem.type = ELEMENT_STATUSBAR;
     status_bar_elem.data.status_bar = status_bar;
-    push_element(ui->elements, &status_bar_elem);
+    push_element(songlist_ui->elements, &status_bar_elem);
 
     songlist.height -= status_bar->size + status_bar->padding * 2;
 
@@ -137,8 +137,8 @@ int main(void) {
             }
         }
 
-        draw_ui(ui);
-        update_ui(ui_state, ui);
+        draw_ui(songlist_ui);
+        update_ui(ui_state, songlist_ui);
 
         // draw_playlist(&window, &list);
 
