@@ -47,7 +47,7 @@ int main(void) {
         return 1;
     }
 
-    Window window = create_window(1280, 720, "Nocturne");
+    Window window = create_window(1280, 720, "Nokturn");
     UI *songlist_ui = create_ui(&window);
 
     SongList songlist = {

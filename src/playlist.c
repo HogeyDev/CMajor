@@ -76,11 +76,12 @@ Playlist load_list(const char *path) {
 
 void add_song(Playlist *p, Song s) {
     p->size++;
+    // printf("%d / %d\n", p->size, p->cap);
     if (p->size >= p->cap) {
         p->cap *= 2; // idk what ratio to use, so 2 will do
 
-        Song *tmp = malloc(p->cap * sizeof(Song));
-        memcpy(tmp, p->songs, p->size);
+        Song *tmp = calloc(p->cap, sizeof(Song));
+        memcpy(tmp, p->songs, p->size * sizeof(Song));
         free(p->songs);
 
         p->songs = tmp;
