@@ -214,6 +214,18 @@ void draw_element(Element *element, UI *ui) {
                                     SDL_SetRenderDrawColor(ui->window->renderer, 0xf8, 0xf8, 0xf2, 255);
                                     SDL_RenderFillRect(ui->window->renderer, &volume_bar_rect);
 
+                                    const char *title = bar->song_name;
+                                    printf("TITLE: %s\n", title);
+                                    SDL_Rect title_loc = {
+                                        .x = bar->x + bar->padding,
+                                        .y = bar->y + bar->padding,
+                                    };
+                                    title_loc.w = progress_bar_x - bar->padding - title_loc.x;
+                                    title_loc.h = bar->height - 2 * bar->padding;
+
+                                    SDL_SetRenderDrawColor(ui->window->renderer, 100, 100, 100, 255);
+                                    SDL_RenderFillRect(ui->window->renderer, &title_loc);
+
                                     break;
                                 }
         default: fprintf(stderr, "couldn't find a method to DRAW element type: %d\n", element->type); break;

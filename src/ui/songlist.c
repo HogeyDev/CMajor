@@ -1,9 +1,11 @@
 #include "songlist.h"
+#include "page.h"
 #include "song.h"
 #include "state.h"
 #include "statusbar.h"
 #include <SDL2/SDL_mixer.h>
 #include <stdio.h>
+#include <string.h>
 
 void update_songlist(UIState *state, SongList *songlist) {
     if (
@@ -31,11 +33,12 @@ void update_songlist(UIState *state, SongList *songlist) {
             const int track = (int)floorf((float)inner_y / (songlist->song_size + songlist->margin));
             if (track < songlist->songs.size) {
                 if (track == songlist->selected_index) {
-                    printf("playing track %d: %s\n", track, songlist->songs.songs[track].name);
+                    Song song = songlist->songs.songs[track];
+                    printf("playing track %d: %s\n", track, song.name);
                     songlist->selected_index = -1;
 
                     char song_path[128];
-                    sprintf(song_path, "songs/%s.wav", songlist->songs.songs[track].id);
+                    sprintf(song_path, "songs/%s.wav", song.id);
                     Mix_Music *music = Mix_LoadMUS(song_path);
                     if (!music) {
                         fprintf(stderr, "Could not load song\n"); 
@@ -44,6 +47,11 @@ void update_songlist(UIState *state, SongList *songlist) {
                     status_bar->song_length = get_wav_length(song_path);
                     Mix_VolumeMusic(status_bar->song_volume);
                     Mix_PlayMusic(music, 0);
+
+                    free(status_bar->song_name);
+                    status_bar->song_name = calloc(strlen(song.name) + 1, sizeof(char));
+                    strcpy(status_bar->song_name, song.name);
+                    // state->current_page = PAGE_HOME;
                 } else {
                     printf("selected track %d: %s\n", track, songlist->songs.songs[track].name);
 

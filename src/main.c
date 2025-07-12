@@ -24,8 +24,6 @@
 static unsigned int framerate = 240;
 #endif
 
-static PlayerPage current_page = PAGE_HOME;
-
 int main(void) {
     status_bar = calloc(1, sizeof(StatusBar));
     Playlist list = load_list("list.txt");
@@ -81,7 +79,7 @@ int main(void) {
     songlist_elem.data.songlist = &songlist;
     push_element(songlist_ui->elements, &songlist_elem);
 
-    status_bar->song_name = "MY COOL SONG NAME LOL!";
+    status_bar->song_name = calloc(1, sizeof(char));
     status_bar->song_length = 100;
     status_bar->song_progress = 64;
     status_bar->progress_bar_length = window.width / 2;
@@ -97,10 +95,17 @@ int main(void) {
 
     songlist.height -= status_bar->size + status_bar->padding * 2;
 
-    UIState *ui_state = (UIState *)calloc(1, sizeof(UIState *));
+    UI *home_ui = create_ui(&window);
+    push_element(home_ui->elements, &status_bar_elem);
+
+    UI *settings_ui = create_ui(&window);
+    push_element(settings_ui->elements, &status_bar_elem);
+
+    UIState *ui_state = (UIState *)calloc(1, sizeof(UIState));
+    ui_state->current_page = PAGE_PLAYLIST;
     ui_state->window = &window;
-    ui_state->mouse = (Mouse *)calloc(1, sizeof(Mouse *));
-    status_bar->song_volume = 10;
+    ui_state->mouse = (Mouse *)calloc(1, sizeof(Mouse));
+    status_bar->song_volume = 4;
     // ui_state->keyboard = (Keyboard *)malloc(sizeof(Keyboard *));
 
 #ifdef FRAMERATE_COUNTER
@@ -137,10 +142,24 @@ int main(void) {
             }
         }
 
-        draw_ui(songlist_ui);
-        update_ui(ui_state, songlist_ui);
-
-        // draw_playlist(&window, &list);
+        switch (ui_state->current_page) {
+                case PAGE_HOME:
+                    draw_ui(home_ui);
+                    update_ui(ui_state, home_ui);
+                    break;
+                // case PAGE_LIBRARY: break;
+                case PAGE_PLAYLIST:
+                    draw_ui(songlist_ui);
+                    update_ui(ui_state, songlist_ui);
+                    break;
+                // case PAGE_QUEUE: break;
+                case PAGE_SETTINGS:
+                    draw_ui(settings_ui);
+                    update_ui(ui_state, settings_ui);
+                    break;
+                default:
+                    printf("Cannot render page: %d\n", ui_state->current_page);
+        }
 
         clear_mouse_edges(ui_state->mouse);
         SDL_RenderPresent(window.renderer);

@@ -1,6 +1,7 @@
 #ifndef STATE_H
 #define STATE_H
 
+#include "page.h"
 #include "window.h"
 
 #define LMB_MASK 0b01
@@ -32,6 +33,7 @@ typedef struct {
     Mouse *mouse;
     Keyboard *keyboard;
     unsigned char volume;
+    PlayerPage current_page;
 } UIState;
 
 void update_mouse_state(Mouse *mouse);
